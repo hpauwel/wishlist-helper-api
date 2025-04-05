@@ -1,6 +1,7 @@
 package be.hpauwel.wishlisthelperrest.controller
 
 import be.hpauwel.wishlisthelperrest.model.User
+import be.hpauwel.wishlisthelperrest.model.dto.UserGetDTO
 import be.hpauwel.wishlisthelperrest.model.dto.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -29,13 +30,18 @@ class UserController(private val service: UserService) {
     }
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable("id") id: UUID): ResponseEntity<User> {
+    fun getUserById(@PathVariable("id") id: UUID): ResponseEntity<UserGetDTO> {
         logger.info { "Fetching user with ID: $id" }
 
         val user = service.findUserById(id.toString())
         return if (user != null) {
             logger.info { "User found: $user" }
-            ResponseEntity.ok(user)
+            val userDto = UserGetDTO(
+                id = user.id!!,
+                email = user.email
+            )
+
+            ResponseEntity.ok(userDto)
         } else {
             logger.warn { "User with ID: $id not found" }
             ResponseEntity.notFound().build()

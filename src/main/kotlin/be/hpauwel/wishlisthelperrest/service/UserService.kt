@@ -16,7 +16,12 @@ class UserService(private val userRepository: UserRepository) {
 
     fun findAll(): List<User> = userRepository.findAll().toList()
 
-    fun findUserById(id: String): User? = userRepository.findByIdOrNull(UUID.fromString(id))
+    @Throws(IllegalArgumentException::class)
+    fun findUserById(id: String): User? {
+        val userId = UUID.fromString(id)
+        return userRepository.findByIdOrNull(userId)
+            ?: throw IllegalArgumentException("User with ID $id not found")
+    }
 
     @Throws(IllegalArgumentException::class)
     fun save(dto: UserPostDTO): User {
