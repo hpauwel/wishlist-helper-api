@@ -1,4 +1,4 @@
-package be.hpauwel.wishlisthelperrest.model.dto
+package be.hpauwel.wishlisthelperrest.model.dto.user
 
 import java.util.*
 

@@ -1,8 +1,8 @@
 package be.hpauwel.wishlisthelperrest.controller
 
 import be.hpauwel.wishlisthelperrest.model.User
-import be.hpauwel.wishlisthelperrest.model.dto.UserGetDTO
-import be.hpauwel.wishlisthelperrest.model.dto.UserPostDTO
+import be.hpauwel.wishlisthelperrest.model.dto.user.UserGetDTO
+import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,7 @@ class UserController(private val service: UserService) {
     fun getUsers(): ResponseEntity<List<UserGetDTO>> {
         logger.info { "Fetching all users" }
         val users = service.findAll()
-        val userDtos = users.map { UserGetDTO(it.id!!, it.email) }
+        val userDtos = users.map { UserGetDTO(it.id, it.email) }
         logger.info { "Fetched ${userDtos.size} users" }
 
         return ResponseEntity.ok(userDtos)

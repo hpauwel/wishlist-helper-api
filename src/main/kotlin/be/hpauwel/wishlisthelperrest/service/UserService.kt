@@ -1,8 +1,8 @@
 package be.hpauwel.wishlisthelperrest.service
 
 import be.hpauwel.wishlisthelperrest.model.User
-import be.hpauwel.wishlisthelperrest.model.dto.UserGetDTO
-import be.hpauwel.wishlisthelperrest.model.dto.UserPostDTO
+import be.hpauwel.wishlisthelperrest.model.dto.user.UserGetDTO
+import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.repository.UserRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull

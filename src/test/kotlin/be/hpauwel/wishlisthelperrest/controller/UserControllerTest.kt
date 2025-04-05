@@ -1,8 +1,8 @@
 package be.hpauwel.wishlisthelperrest.controller
 
 import be.hpauwel.wishlisthelperrest.model.User
-import be.hpauwel.wishlisthelperrest.model.dto.UserGetDTO
-import be.hpauwel.wishlisthelperrest.model.dto.UserPostDTO
+import be.hpauwel.wishlisthelperrest.model.dto.user.UserGetDTO
+import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
 import io.mockk.every
 import io.mockk.mockk

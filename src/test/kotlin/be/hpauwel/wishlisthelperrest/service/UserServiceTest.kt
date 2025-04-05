@@ -1,7 +1,7 @@
 package be.hpauwel.wishlisthelperrest.service
 
 import be.hpauwel.wishlisthelperrest.model.User
-import be.hpauwel.wishlisthelperrest.model.dto.UserPostDTO
+import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.repository.UserRepository
 import io.mockk.every
 import io.mockk.mockk
