@@ -39,7 +39,11 @@ class UserServiceTest {
     @Test
     fun `save should throw exception when user already exists`() {
         val dto = UserPostDTO(email = "user@example.com", password = "password123")
-        every { userRepository.findUserByEmail(dto.email) } returns User(id = UUID.randomUUID(), email = dto.email, password = dto.password)
+        every { userRepository.findUserByEmail(dto.email) } returns User(
+            id = UUID.randomUUID(),
+            email = dto.email,
+            password = dto.password
+        )
 
         assertThrows<IllegalArgumentException> { userService.save(dto) }
     }
@@ -48,7 +52,11 @@ class UserServiceTest {
     fun `save should save user when user does not exist`() {
         val dto = UserPostDTO(email = "newuser@example.com", password = "password123")
         every { userRepository.findUserByEmail(dto.email) } returns null
-        every { userRepository.save(any()) } returns User(id = UUID.randomUUID(), email = dto.email, password = dto.password)
+        every { userRepository.save(any()) } returns User(
+            id = UUID.randomUUID(),
+            email = dto.email,
+            password = dto.password
+        )
 
         val result = userService.save(dto)
         assertNotNull(result)

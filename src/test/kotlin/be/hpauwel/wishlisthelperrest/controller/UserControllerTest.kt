@@ -6,7 +6,7 @@ import be.hpauwel.wishlisthelperrest.model.dto.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.util.*
@@ -18,11 +18,11 @@ class UserControllerTest {
 
     @Test
     fun `getUsers should return list of users`() {
-        val users = listOf(User(id = UUID.randomUUID(), email = "user1@example.com", password = "password1"))
+        val users = listOf(UserGetDTO(id = UUID.randomUUID(), email = "user1@example.com"))
         every { userService.findAll() } returns users
 
         val result = userController.getUsers()
-        assertEquals(users, result)
+        assertEquals(users, result.body)
     }
 
     @Test

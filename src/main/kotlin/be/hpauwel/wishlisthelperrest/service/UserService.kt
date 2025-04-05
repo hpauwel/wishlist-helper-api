@@ -1,6 +1,7 @@
 package be.hpauwel.wishlisthelperrest.service
 
 import be.hpauwel.wishlisthelperrest.model.User
+import be.hpauwel.wishlisthelperrest.model.dto.UserGetDTO
 import be.hpauwel.wishlisthelperrest.model.dto.UserPostDTO
 import be.hpauwel.wishlisthelperrest.repository.UserRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -14,7 +15,13 @@ class UserService(private val userRepository: UserRepository) {
 
     fun findUserByEmail(email: String): User? = userRepository.findUserByEmail(email)
 
-    fun findAll(): List<User> = userRepository.findAll().toList()
+    fun findAll(): List<UserGetDTO> {
+        val users = userRepository.findAll()
+        val result = users.map { UserGetDTO(it.id!!, it.email) }
+
+        logger.info { "Fetched ${result.size} users" }
+        return result
+    }
 
     @Throws(IllegalArgumentException::class)
     fun findUserById(id: String): User? {

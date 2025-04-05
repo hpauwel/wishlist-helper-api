@@ -15,7 +15,14 @@ class UserController(private val service: UserService) {
     private val logger = KotlinLogging.logger {}
 
     @GetMapping
-    fun getUsers() = service.findAll()
+    fun getUsers(): ResponseEntity<List<UserGetDTO>> {
+        logger.info { "Fetching all users" }
+        val users = service.findAll()
+        val userDtos = users.map { UserGetDTO(it.id!!, it.email) }
+        logger.info { "Fetched ${userDtos.size} users" }
+
+        return ResponseEntity.ok(userDtos)
+    }
 
     @PostMapping
     fun create(@RequestBody dto: UserPostDTO): ResponseEntity<User> {
