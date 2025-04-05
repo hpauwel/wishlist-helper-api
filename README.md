@@ -11,7 +11,7 @@ This is a REST API for managing a wishlist application. It is built using Kotlin
 
 ## Prerequisites
 
-- JDK 17 or higher
+- JDK 21 or higher
 - Gradle 7.0 or higher
 
 ## Getting Started
