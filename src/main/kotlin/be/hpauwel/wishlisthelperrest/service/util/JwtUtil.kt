@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.jvm.Throws
 
 @Component
 class JwtUtil(
