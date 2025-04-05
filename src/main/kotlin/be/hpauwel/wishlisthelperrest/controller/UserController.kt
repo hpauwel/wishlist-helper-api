@@ -19,7 +19,7 @@ class UserController(private val service: UserService) {
         logger.info { "Fetching all users" }
         val users = service.findAll()
         val userDtos = users.map { UserGetDTO(it.id, it.email) }
-        logger.info { "Fetched ${userDtos.size} users" }
+        logger.debug { "Fetched ${userDtos.size} users" }
 
         return ResponseEntity.ok(userDtos)
     }
@@ -51,6 +51,25 @@ class UserController(private val service: UserService) {
             ResponseEntity.ok(userDto)
         } else {
             logger.warn { "User with ID: $id not found" }
+            ResponseEntity.notFound().build()
+        }
+    }
+
+    @GetMapping("/email/{email}")
+    fun getUserByEmail(@PathVariable("email") email: String): ResponseEntity<UserGetDTO> {
+        logger.info { "Fetching user by email: $email" }
+        val user = service.findUserByEmail(email)
+
+        return if (user != null) {
+            logger.info { "User found: $user" }
+            val userDto = UserGetDTO(
+                id = user.id!!,
+                email = user.email
+            )
+
+            ResponseEntity.ok(userDto)
+        } else {
+            logger.warn { "User with email: $email not found" }
             ResponseEntity.notFound().build()
         }
     }
