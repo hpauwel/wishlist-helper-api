@@ -1,17 +1,24 @@
 package be.hpauwel.wishlisthelperrest.controller
 
 import be.hpauwel.wishlisthelperrest.model.User
+import be.hpauwel.wishlisthelperrest.model.dto.user.LoginReq
+import be.hpauwel.wishlisthelperrest.model.dto.user.LoginRes
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/api/users")
-class UserController(private val service: UserService) {
+@RequestMapping("/api/auth")
+class AuthController(
+    private val service: UserService,
+    private val authenticationManager: AuthenticationManager
+) {
     private val logger = KotlinLogging.logger {}
 
     @GetMapping
@@ -24,8 +31,8 @@ class UserController(private val service: UserService) {
         return ResponseEntity.ok(userDtos)
     }
 
-    @PostMapping
-    fun create(@RequestBody dto: UserPostDTO): ResponseEntity<User> {
+    @PostMapping("/register")
+    fun register(@RequestBody dto: UserPostDTO): ResponseEntity<User> {
         try {
             val createdUser = service.save(dto)
             logger.info { "Created user with ID: ${createdUser.id}" }
@@ -73,4 +80,19 @@ class UserController(private val service: UserService) {
             ResponseEntity.notFound().build()
         }
     }
+
+//    @PostMapping("/login")
+//    fun login(@RequestBody loginReq: LoginReq): ResponseEntity<LoginRes> {
+//        try {
+//            val authentication = authenticationManager
+//                .authenticate(
+//                    UsernamePasswordAuthenticationToken(
+//                        loginReq.email,
+//                        loginReq.password
+//                    )
+//                )
+//            val email = authentication.name
+//            val password =
+//        }
+//    }
 }

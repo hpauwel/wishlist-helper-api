@@ -6,11 +6,14 @@ import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.repository.UserRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.core.authority.AuthorityUtils
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class UserService(private val userRepository: UserRepository) {
+class UserService(private val userRepository: UserRepository) : UserDetailsService {
     private val logger = KotlinLogging.logger {}
 
     fun findUserByEmail(email: String): User? = userRepository.findUserByEmail(email)
@@ -45,5 +48,19 @@ class UserService(private val userRepository: UserRepository) {
 
         logger.warn { "User with email ${dto.email} already exists" }
         throw IllegalArgumentException("User with email ${dto.email} already exists")
+    }
+
+    override fun loadUserByUsername(username: String): UserDetails? {
+        val user = userRepository.findUserByEmail(username)
+            ?: throw IllegalArgumentException("User with email $username not found")
+        logger.info { "Loading user by username: $username" }
+        logger.debug { "User details: $user" }
+        val authorities = AuthorityUtils.createAuthorityList("ROLE_USER")
+
+        return org.springframework.security.core.userdetails.User(
+            user.email,
+            user.password,
+            authorities
+        )
     }
 }
