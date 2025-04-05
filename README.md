@@ -1,25 +1,34 @@
 # Wishlist Helper REST API
 
-This is a REST API for managing a wishlist application. It is built using Kotlin, Spring Boot, and Gradle.
+This project is a RESTful API for managing wishlists. It is built using Kotlin, Spring Boot, and Gradle.
 
-## Project Structure
+## Features
 
-- `src/main/kotlin/be/hpauwel/wishlisthelperrest/WishlistHelperRestApplication.kt`: Main application entry point.
-- `src/main/kotlin/be/hpauwel/wishlisthelperrest/model/User.kt`: User entity definition.
-- `src/main/kotlin/be/hpauwel/wishlisthelperrest/repository/UserRepository.kt`: User repository interface.
-- `src/main/kotlin/be/hpauwel/wishlisthelperrest/service/UserService.kt`: User service for business logic.
+- User registration and authentication
+- CRUD operations for users and wishlists
+- Secure endpoints with Spring Security
 
-## Prerequisites
+## Technologies Used
 
-- JDK 21 or higher
-- Gradle 7.0 or higher
+- Kotlin
+- Spring Boot
+- Spring Security
+- Gradle
+- MockK for unit testing
 
 ## Getting Started
 
+### Prerequisites
+
+- JDK 21 or higher
+- Gradle
+
+### Installation
+
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/wishlist-helper-rest.git
-    cd wishlist-helper-rest
+    git clone https://github.com/hpauwel/wishlisthelperrest.git
+    cd wishlisthelperrest
     ```
 
 2. Build the project:
@@ -32,47 +41,8 @@ This is a REST API for managing a wishlist application. It is built using Kotlin
     ./gradlew bootRun
     ```
 
-## API Endpoints
+### Running Tests
 
-### User Endpoints
-
-- **Find User by Email**
-    - **URL:** `/users/email/{email}`
-    - **Method:** `GET`
-    - **Description:** Retrieve a user by their email address.
-
-- **Find All Users**
-    - **URL:** `/users`
-    - **Method:** `GET`
-    - **Description:** Retrieve all users.
-
-- **Find User by ID**
-    - **URL:** `/users/{id}`
-    - **Method:** `GET`
-    - **Description:** Retrieve a user by their ID.
-
-- **Create User**
-    - **URL:** `/users`
-    - **Method:** `POST`
-    - **Description:** Create a new user.
-    - **Request Body:**
-        ```json
-        {
-            "email": "user@example.com",
-            "password": "password123"
-        }
-        ```
-
-## Models
-
-### User
-
-```kotlin
-@Entity(name = "owner")
-data class User(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID?,
-    val email: String,
-    val password: String
-)
+To run the unit tests, use the following command:
+```sh
+./gradlew test
