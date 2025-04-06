@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -24,7 +25,8 @@ import java.util.*
 class AuthController(
     private val service: UserService,
     private val authenticationManager: AuthenticationManager,
-    private val jwtUtil: JwtUtil
+    private val jwtUtil: JwtUtil,
+    private val passwordEncoder: PasswordEncoder
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -42,8 +44,12 @@ class AuthController(
     fun register(@RequestBody dto: UserPostDTO): ResponseEntity<User> {
         try {
             logger.info { "Registering user with email: ${dto.email}" }
+            val user = UserPostDTO(
+                email = dto.email,
+                password = passwordEncoder.encode(dto.password),
+            )
 
-            val createdUser = service.save(dto)
+            val createdUser = service.save(user)
             logger.info { "Created user with ID: ${createdUser.id}" }
             return ResponseEntity.ok(createdUser)
         } catch (e: IllegalArgumentException) {

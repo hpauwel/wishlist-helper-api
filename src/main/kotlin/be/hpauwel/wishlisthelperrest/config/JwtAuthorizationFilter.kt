@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthorizationFilter(
     private val jwtUtil: JwtUtil,
-    private val ObjectMapper: ObjectMapper,
+    private val objectMapper: ObjectMapper,
 ) : OncePerRequestFilter() {
     private val log = KotlinLogging.logger {}
 
@@ -51,7 +51,7 @@ class JwtAuthorizationFilter(
             }
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             response.contentType = "application/json"
-            response.writer.write(ObjectMapper.writeValueAsString(mapOf("error" to e.message)))
+            response.writer.write(objectMapper.writeValueAsString(mapOf("error" to e.message)))
             return
         }
 

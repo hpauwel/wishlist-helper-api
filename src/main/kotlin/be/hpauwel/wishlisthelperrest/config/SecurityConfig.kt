@@ -43,7 +43,7 @@ class SecurityConfig(
                 csrf.ignoringRequestMatchers("/api/**")
             }
             .authorizeHttpRequests { authorize ->
-                authorize.requestMatchers("/api/auth/**", "/actuator/health").permitAll()
+                authorize.requestMatchers("/api/auth/login", "/api/auth/register", "/actuator/health").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
