@@ -19,7 +19,7 @@ class JwtAuthorizationFilter(
     private val ObjectMapper: ObjectMapper,
 ) : OncePerRequestFilter()
 {
-    private val logger = KotlinLogging.logger {}
+    private val log = KotlinLogging.logger {}
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -33,20 +33,20 @@ class JwtAuthorizationFilter(
                 return
             }
 
-            logger.debug {
+            log.debug {
                 "Token: $token"
             }
 
             val claims = jwtUtil.resolveClaims(request)
             val email = claims.subject
-            logger.debug {
+            log.debug {
                 "Email: $email"
             }
 
             val authentication: Authentication = UsernamePasswordAuthenticationToken(email, claims, ArrayList<GrantedAuthority>())
             SecurityContextHolder.getContext().authentication = authentication
         } catch (e: Exception) {
-            logger.error {
+            log.error {
                 "Error in JWT filter: ${e.message}"
             }
             response.status = HttpServletResponse.SC_UNAUTHORIZED

@@ -41,6 +41,8 @@ class AuthController(
     @PostMapping("/register")
     fun register(@RequestBody dto: UserPostDTO): ResponseEntity<User> {
         try {
+            logger.info { "Registering user with email: ${dto.email}" }
+
             val createdUser = service.save(dto)
             logger.info { "Created user with ID: ${createdUser.id}" }
             return ResponseEntity.ok(createdUser)
