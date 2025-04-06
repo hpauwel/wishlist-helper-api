@@ -2,7 +2,6 @@ package be.hpauwel.wishlisthelperrest.controller
 
 import be.hpauwel.wishlisthelperrest.model.User
 import be.hpauwel.wishlisthelperrest.model.dto.user.LoginReq
-import be.hpauwel.wishlisthelperrest.model.dto.user.LoginRes
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import java.time.LocalDateTime
 import java.util.*
 
 class AuthControllerTest {
