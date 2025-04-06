@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.*
 
 class AuthControllerTest {
@@ -21,7 +22,8 @@ class AuthControllerTest {
     private val userService: UserService = mockk()
     private val authenticationManager: AuthenticationManager = mockk()
     private val jwtUtil: JwtUtil = JwtUtil()
-    private val authController = AuthController(userService, authenticationManager, jwtUtil)
+    private val passwordEncoder: PasswordEncoder = mockk()
+    private val authController = AuthController(userService, authenticationManager, jwtUtil, passwordEncoder)
 
     @Test
     fun `getUsers should return list of users`() {
@@ -38,6 +40,9 @@ class AuthControllerTest {
         val dto = UserPostDTO(email = "newuser@example.com", password = "password123")
         val user = User(id = UUID.randomUUID(), email = dto.email, password = dto.password)
         every { userService.save(dto) } returns user
+        every {
+            passwordEncoder.encode(dto.password)
+        } returns "password123"
 
         val result = authController.register(dto)
         assertEquals(HttpStatus.OK, result.statusCode)
@@ -48,6 +53,9 @@ class AuthControllerTest {
     fun `register should return bad request when user already exists`() {
         val dto = UserPostDTO(email = "existinguser@example.com", password = "password123")
         every { userService.save(dto) } throws IllegalArgumentException("User with email ${dto.email} already exists")
+        every {
+            passwordEncoder.encode(dto.password)
+        } returns "password123"
 
         val result = authController.register(dto)
         assertEquals(HttpStatus.BAD_REQUEST, result.statusCode)
@@ -101,6 +109,10 @@ class AuthControllerTest {
             loginReq.email,
             loginReq.password
         )
+
+        every {
+            passwordEncoder.encode(loginReq.password)
+        } returns "password123"
 
         val result = authController.login(loginReq)
         assertEquals(HttpStatus.OK, result.statusCode)
