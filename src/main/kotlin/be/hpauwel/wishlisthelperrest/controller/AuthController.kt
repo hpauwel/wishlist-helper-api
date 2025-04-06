@@ -6,10 +6,16 @@ import be.hpauwel.wishlisthelperrest.model.dto.user.LoginRes
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
+import be.hpauwel.wishlisthelperrest.service.util.JwtUtil
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -17,7 +23,8 @@ import java.util.*
 @RequestMapping("/api/auth")
 class AuthController(
     private val service: UserService,
-    private val authenticationManager: AuthenticationManager
+    private val authenticationManager: AuthenticationManager,
+    private val jwtUtil: JwtUtil
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -81,18 +88,54 @@ class AuthController(
         }
     }
 
-//    @PostMapping("/login")
-//    fun login(@RequestBody loginReq: LoginReq): ResponseEntity<LoginRes> {
-//        try {
-//            val authentication = authenticationManager
-//                .authenticate(
-//                    UsernamePasswordAuthenticationToken(
-//                        loginReq.email,
-//                        loginReq.password
-//                    )
-//                )
-//            val email = authentication.name
-//            val password =
-//        }
-//    }
+    @ResponseBody
+    @PostMapping("/login")
+    fun login(@RequestBody loginReq: LoginReq): ResponseEntity<LoginRes> {
+        try {
+            logger.info { "Logging in user with email: ${loginReq.email}" }
+            val authentication = authenticationManager
+                .authenticate(
+                    UsernamePasswordAuthenticationToken(
+                        loginReq.email,
+                        loginReq.password
+                    )
+                )
+            val email = authentication.name
+            val password = loginReq.password
+            val user = User(
+                id = null,
+                email = email,
+                password = password
+            )
+            val token = jwtUtil.createToken(user)
+            val expiresIn = jwtUtil.getExpiryTime(token)
+
+            val loginRes = LoginRes(
+                email = email,
+                token = token,
+                expiresIn = expiresIn
+            )
+
+            logger.info { "User logged in successfully: ${loginRes.email}" }
+            return ResponseEntity.ok(loginRes)
+        } catch (e: BadCredentialsException) {
+            logger.error(e) { "Invalid credentials: ${e.message}" }
+            return ResponseEntity.badRequest().build()
+        } catch (e: Exception) {
+            logger.error(e) { "Error during login: ${e.message}" }
+            return ResponseEntity.status(500).build()
+        }
+    }
+
+    @ResponseBody
+    @PostMapping("/logout")
+    fun logout(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        authentication: Authentication
+    ): ResponseEntity<Void> {
+        logger.debug { "Logging out user" }
+        SecurityContextLogoutHandler().logout(request, response, authentication)
+        return ResponseEntity.ok().build()
+    }
 }

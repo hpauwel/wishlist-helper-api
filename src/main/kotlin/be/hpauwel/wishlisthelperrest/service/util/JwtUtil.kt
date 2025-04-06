@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit
 @Component
 class JwtUtil(
     private val secretKey: String = "test",
-    val expirationTime: Long = 1000 * 60 * 60,
-    val jwtParser: JwtParser = Jwts.parser().setSigningKey(secretKey),
+    private val expirationTime: Long = 1000 * 60 * 60,
+    private val jwtParser: JwtParser = Jwts.parser().setSigningKey(secretKey),
     private val tokenHeader: String = "Authorization",
     private val tokenPrefix: String = "Bearer ",
 ) {

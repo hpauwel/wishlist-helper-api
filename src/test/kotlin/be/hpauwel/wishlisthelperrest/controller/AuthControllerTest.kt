@@ -1,22 +1,29 @@
 package be.hpauwel.wishlisthelperrest.controller
 
 import be.hpauwel.wishlisthelperrest.model.User
+import be.hpauwel.wishlisthelperrest.model.dto.user.LoginReq
+import be.hpauwel.wishlisthelperrest.model.dto.user.LoginRes
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelperrest.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelperrest.service.UserService
+import be.hpauwel.wishlisthelperrest.service.util.JwtUtil
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import java.time.LocalDateTime
 import java.util.*
 
 class AuthControllerTest {
 
     private val userService: UserService = mockk()
     private val authenticationManager: AuthenticationManager = mockk()
-    private val authController = AuthController(userService, authenticationManager)
+    private val jwtUtil: JwtUtil = JwtUtil()
+    private val authController = AuthController(userService, authenticationManager, jwtUtil)
 
     @Test
     fun `getUsers should return list of users`() {
@@ -86,5 +93,30 @@ class AuthControllerTest {
 
         val result = authController.getUserByEmail(email)
         assertEquals(HttpStatus.NOT_FOUND, result.statusCode)
+    }
+
+    @Test
+    fun `login should return token when credentials are valid`() {
+        val loginReq = LoginReq(email = "user@example.com", password = "password123")
+
+        every { authenticationManager.authenticate(any<UsernamePasswordAuthenticationToken>()) } returns UsernamePasswordAuthenticationToken(
+            loginReq.email,
+            loginReq.password
+        )
+
+        val result = authController.login(loginReq)
+        assertEquals(HttpStatus.OK, result.statusCode)
+    }
+
+    @Test
+    fun `login should return bad request when credentials are invalid`() {
+        val loginReq = LoginReq(email = "user@example.com", password = "wrongpassword")
+
+        every { authenticationManager.authenticate(any<UsernamePasswordAuthenticationToken>()) } throws BadCredentialsException(
+            "Invalid credentials"
+        )
+
+        val result = authController.login(loginReq)
+        assertEquals(HttpStatus.BAD_REQUEST, result.statusCode)
     }
 }
