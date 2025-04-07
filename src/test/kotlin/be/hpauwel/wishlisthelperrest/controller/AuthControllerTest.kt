@@ -38,7 +38,7 @@ class AuthControllerTest {
     @Test
     fun `register should return created user`() {
         val dto = UserPostDTO(email = "newuser@example.com", password = "password123")
-        val user = User(id = UUID.randomUUID(), email = dto.email, password = dto.password)
+        val user = User(id = UUID.randomUUID(), email = dto.email, password = dto.password, wishlists = emptyList())
         every { userService.save(dto) } returns user
         every {
             passwordEncoder.encode(dto.password)
@@ -64,7 +64,7 @@ class AuthControllerTest {
     @Test
     fun `getUserById should return user when found`() {
         val id = UUID.randomUUID()
-        val user = User(id = id, email = "user@example.com", password = "password123")
+        val user = User(id = id, email = "user@example.com", password = "password123", wishlists = emptyList())
         every { userService.findUserById(id.toString()) } returns user
 
         val result = authController.getUserById(id)
@@ -84,7 +84,7 @@ class AuthControllerTest {
     @Test
     fun `getUserByEmail should return user when found`() {
         val email = "user@example.com"
-        val user = User(id = UUID.randomUUID(), email = email, password = "password123")
+        val user = User(id = UUID.randomUUID(), email = email, password = "password123", wishlists = emptyList())
         every { userService.findUserByEmail(email) } returns user
 
         val result = authController.getUserByEmail(email)

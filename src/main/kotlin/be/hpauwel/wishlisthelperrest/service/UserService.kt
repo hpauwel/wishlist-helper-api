@@ -39,7 +39,8 @@ class UserService(private val userRepository: UserRepository) : UserDetailsServi
             val user = User(
                 id = null,
                 email = dto.email,
-                password = dto.password
+                password = dto.password,
+                wishlists = emptyList(),
             )
 
             logger.info { "Saving user ${user.email} to DB" }

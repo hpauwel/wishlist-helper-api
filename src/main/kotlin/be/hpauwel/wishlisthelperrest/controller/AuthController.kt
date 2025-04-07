@@ -113,7 +113,8 @@ class AuthController(
             val user = User(
                 id = null,
                 email = email,
-                password = password
+                password = password,
+                wishlists = emptyList(),
             )
             val token = jwtUtil.createToken(user)
             val expiresIn = jwtUtil.getExpiryTime(token)
