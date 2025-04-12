@@ -4,8 +4,10 @@ import be.hpauwel.wishlisthelper.model.Wishlist
 import be.hpauwel.wishlisthelper.model.dto.wishlist.WishlistGetDTO
 import be.hpauwel.wishlisthelper.repository.WishlistRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.stereotype.Service
 import java.util.UUID
 
+@Service
 class WishlistService(private val repository: WishlistRepository) {
     private val logger = KotlinLogging.logger {}
 
@@ -17,8 +19,15 @@ class WishlistService(private val repository: WishlistRepository) {
     }
 
     fun getAllWishlistForUser(id: UUID): List<WishlistGetDTO> {
-        logger.info { "Fetching all wishlists for user with id=$id" }
+        logger.info { "Fetching all wishlists for user id=$id" }
         val wishlists = repository.findAllByOwner_Id(id)
+
+        return mapWishlistsToWishlistsGetDTOs(wishlists)
+    }
+
+    fun getAllPublicWishlistsForUser(id: UUID): List<WishlistGetDTO> {
+        logger.info { "Fetching all public wishlists for user id=$id" }
+        val wishlists = repository.findAllByPublicAndOwner_Id(id)
 
         return mapWishlistsToWishlistsGetDTOs(wishlists)
     }
