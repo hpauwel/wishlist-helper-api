@@ -27,7 +27,7 @@ class WishlistService(private val repository: WishlistRepository) {
 
     fun getAllPublicWishlistsForUser(id: UUID): List<WishlistGetDTO> {
         logger.info { "Fetching all public wishlists for user id=$id" }
-        val wishlists = repository.findAllByPublicAndOwner_Id(id)
+        val wishlists = repository.findAllByOwner_IdAndIsPublic(id, true)
 
         return mapWishlistsToWishlistsGetDTOs(wishlists)
     }
