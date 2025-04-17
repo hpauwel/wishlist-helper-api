@@ -1,8 +1,8 @@
 package be.hpauwel.wishlisthelper.controller
 
 import be.hpauwel.wishlisthelper.model.User
-import be.hpauwel.wishlisthelper.model.dto.user.LoginReq
-import be.hpauwel.wishlisthelper.model.dto.user.LoginRes
+import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginReq
+import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginRes
 import be.hpauwel.wishlisthelper.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelper.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelper.service.UserService
@@ -33,8 +33,8 @@ class AuthController(
     @GetMapping
     fun getUsers(): ResponseEntity<List<UserGetDTO>> {
         logger.info { "Fetching all users" }
-        val users = service.findAll()
-        val userDtos = users.map { UserGetDTO(it.id, it.email) }
+
+        val userDtos = service.findAll().map { UserGetDTO(it.id, it.email) }
         logger.debug { "Fetched ${userDtos.size} users" }
 
         return ResponseEntity.ok(userDtos)

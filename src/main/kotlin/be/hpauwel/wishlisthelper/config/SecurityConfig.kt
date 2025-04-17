@@ -7,7 +7,6 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -24,13 +23,6 @@ class SecurityConfig(
     private val userService: UserService,
     private val jwtAuthorizationFilter: JwtAuthorizationFilter
 ) {
-    @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web ->
-            web.ignoring()
-                .requestMatchers("/h2-console/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
-        }
-    }
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -43,7 +35,8 @@ class SecurityConfig(
                 csrf.ignoringRequestMatchers("/api/**")
             }
             .authorizeHttpRequests { authorize ->
-                authorize.requestMatchers("/api/auth/login", "/api/auth/register", "/actuator/health").permitAll()
+                authorize.requestMatchers("/api/auth/login", "/api/auth/register", "/actuator/health")
+                    .permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

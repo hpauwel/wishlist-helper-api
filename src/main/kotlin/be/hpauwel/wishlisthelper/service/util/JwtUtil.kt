@@ -23,6 +23,7 @@ class JwtUtil(
     private val logger = KotlinLogging.logger {}
 
     fun createToken(user: User): String {
+        logger.debug { "Creating JWT token for user: ${user.email}" }
         val claims = Jwts.claims().setSubject(user.email)
         val tokenCreationTime = Date()
         val tokenValidity = Date(tokenCreationTime.time + TimeUnit.MINUTES.toMillis(expirationTime))

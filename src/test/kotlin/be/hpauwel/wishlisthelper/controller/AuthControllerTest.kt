@@ -1,7 +1,7 @@
 package be.hpauwel.wishlisthelper.controller
 
 import be.hpauwel.wishlisthelper.model.User
-import be.hpauwel.wishlisthelper.model.dto.user.LoginReq
+import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginReq
 import be.hpauwel.wishlisthelper.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelper.model.dto.user.UserPostDTO
 import be.hpauwel.wishlisthelper.service.UserService

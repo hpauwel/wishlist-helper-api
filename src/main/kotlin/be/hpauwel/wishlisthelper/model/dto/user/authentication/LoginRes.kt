@@ -1,4 +1,4 @@
-package be.hpauwel.wishlisthelper.model.dto.user
+package be.hpauwel.wishlisthelper.model.dto.user.authentication
 
 import java.time.LocalDateTime
 

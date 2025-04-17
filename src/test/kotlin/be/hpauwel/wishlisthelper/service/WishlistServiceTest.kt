@@ -63,7 +63,7 @@ class WishlistServiceTest {
         )
 
         every { wishlistRepository.findAllByOwner_Id(any()) } returns wishlists
-        val result = wishlistService.getAllWishlistForUser(owner.id!!)
+        val result = wishlistService.getAllWishlistsForUser(owner.id!!)
 
         assertFalse(result.isEmpty())
         assertEquals(1, result.size)
@@ -73,7 +73,7 @@ class WishlistServiceTest {
     fun `getAllWishlistsForUser should return empty list when no wishlists exist`() {
         every { wishlistRepository.findAllByOwner_Id(any()) } returns emptyList()
 
-        val result = wishlistService.getAllWishlistForUser(UUID.randomUUID())
+        val result = wishlistService.getAllWishlistsForUser(UUID.randomUUID())
         assertTrue(result.isEmpty())
     }
 
