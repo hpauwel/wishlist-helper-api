@@ -3,6 +3,7 @@ package be.hpauwel.wishlisthelper.service
 import be.hpauwel.wishlisthelper.model.User
 import be.hpauwel.wishlisthelper.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelper.model.dto.user.UserPostDTO
+import be.hpauwel.wishlisthelper.model.dto.wishlist.WishlistGetDTO
 import be.hpauwel.wishlisthelper.repository.UserRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -16,14 +17,23 @@ import java.util.*
 class UserService(private val userRepository: UserRepository) : UserDetailsService {
     private val logger = KotlinLogging.logger {}
 
-    fun findUserByEmail(email: String): User? = userRepository.findUserByEmail(email)
+    fun findUserByEmail(email: String): UserGetDTO? {
+        val user = userRepository.findUserByEmail(email)
+            ?: return null
+        logger.info { "User with email $email found" }
+        logger.debug { "User details: $user" }
 
-    fun findAll(): List<UserGetDTO> {
-        val users = userRepository.findAll()
-        val result = users.map { UserGetDTO(it.id!!, it.email) }
+        val wishlists = user.wishlists.map {
+            WishlistGetDTO(
+                id = it.id!!,
+                title = it.title,
+                description = it.description,
+                createdAt = it.createdAt,
+                isPublic = it.isPublic,
+            )
+        }
 
-        logger.info { "Fetched ${result.size} users" }
-        return result
+        return UserGetDTO(user.id!!, user.email, wishlists)
     }
 
     @Throws(IllegalArgumentException::class)
@@ -35,16 +45,17 @@ class UserService(private val userRepository: UserRepository) : UserDetailsServi
 
     @Throws(IllegalArgumentException::class)
     fun save(dto: UserPostDTO): User {
-        if (findUserByEmail(dto.email) == null) {
-            val user = User(
+        val user = userRepository.findUserByEmail(dto.email)
+
+        if (user == null) {
+            val newUser = User(
                 id = null,
                 email = dto.email,
                 password = dto.password,
-                wishlists = emptyList(),
+                wishlists = emptyList()
             )
-
-            logger.info { "Saving user ${user.email} to DB" }
-            return userRepository.save(user)
+            logger.info { "Saving new user: $newUser" }
+            return userRepository.save(newUser)
         }
 
         logger.warn { "User with email ${dto.email} already exists" }

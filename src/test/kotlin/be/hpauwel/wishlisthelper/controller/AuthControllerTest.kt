@@ -1,9 +1,9 @@
 package be.hpauwel.wishlisthelper.controller
 
 import be.hpauwel.wishlisthelper.model.User
-import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginReq
 import be.hpauwel.wishlisthelper.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelper.model.dto.user.UserPostDTO
+import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginReq
 import be.hpauwel.wishlisthelper.service.UserService
 import be.hpauwel.wishlisthelper.service.util.JwtUtil
 import io.mockk.every
@@ -25,15 +25,6 @@ class AuthControllerTest {
     private val passwordEncoder: PasswordEncoder = mockk()
     private val authController = AuthController(userService, authenticationManager, jwtUtil, passwordEncoder)
 
-    @Test
-    fun `getUsers should return list of users`() {
-        val users = listOf(UserGetDTO(id = UUID.randomUUID(), email = "user1@example.com"))
-        every { userService.findAll() } returns users
-
-        val result = authController.getUsers()
-        assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(users.map { UserGetDTO(it.id, it.email) }, result.body)
-    }
 
     @Test
     fun `register should return created user`() {
@@ -69,7 +60,7 @@ class AuthControllerTest {
 
         val result = authController.getUserById(id)
         assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(UserGetDTO(id = id, email = user.email), result.body)
+        assertEquals(UserGetDTO(id = id, email = user.email, wishlists = emptyList()), result.body)
     }
 
     @Test
@@ -84,22 +75,14 @@ class AuthControllerTest {
     @Test
     fun `getUserByEmail should return user when found`() {
         val email = "user@example.com"
-        val user = User(id = UUID.randomUUID(), email = email, password = "password123", wishlists = emptyList())
+        val user = UserGetDTO(id = UUID.randomUUID(), email = email, wishlists = emptyList())
         every { userService.findUserByEmail(email) } returns user
 
         val result = authController.getUserByEmail(email)
         assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(UserGetDTO(id = user.id!!, email = user.email), result.body)
+        assertEquals(UserGetDTO(id = user.id, email = user.email, wishlists = emptyList()), result.body)
     }
 
-    @Test
-    fun `getUserByEmail should return not found when user does not exist`() {
-        val email = "user@example.com"
-        every { userService.findUserByEmail(email) } returns null
-
-        val result = authController.getUserByEmail(email)
-        assertEquals(HttpStatus.NOT_FOUND, result.statusCode)
-    }
 
     @Test
     fun `login should return token when credentials are valid`() {

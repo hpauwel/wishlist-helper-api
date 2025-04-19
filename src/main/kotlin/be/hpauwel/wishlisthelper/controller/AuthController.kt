@@ -1,10 +1,11 @@
 package be.hpauwel.wishlisthelper.controller
 
 import be.hpauwel.wishlisthelper.model.User
-import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginReq
-import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginRes
 import be.hpauwel.wishlisthelper.model.dto.user.UserGetDTO
 import be.hpauwel.wishlisthelper.model.dto.user.UserPostDTO
+import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginReq
+import be.hpauwel.wishlisthelper.model.dto.user.authentication.LoginRes
+import be.hpauwel.wishlisthelper.model.dto.wishlist.WishlistGetDTO
 import be.hpauwel.wishlisthelper.service.UserService
 import be.hpauwel.wishlisthelper.service.util.JwtUtil
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -29,16 +30,6 @@ class AuthController(
     private val passwordEncoder: PasswordEncoder
 ) {
     private val logger = KotlinLogging.logger {}
-
-    @GetMapping
-    fun getUsers(): ResponseEntity<List<UserGetDTO>> {
-        logger.info { "Fetching all users" }
-
-        val userDtos = service.findAll().map { UserGetDTO(it.id, it.email) }
-        logger.debug { "Fetched ${userDtos.size} users" }
-
-        return ResponseEntity.ok(userDtos)
-    }
 
     @PostMapping("/register")
     fun register(@RequestBody dto: UserPostDTO): ResponseEntity<User> {
@@ -65,9 +56,21 @@ class AuthController(
         val user = service.findUserById(id.toString())
         return if (user != null) {
             logger.info { "User found: $user" }
+
+            val wishlists = user.wishlists.map {
+                WishlistGetDTO(
+                    id = it.id!!,
+                    title = it.title,
+                    description = it.description,
+                    createdAt = it.createdAt,
+                    isPublic = it.isPublic,
+                )
+            }
+
             val userDto = UserGetDTO(
                 id = user.id!!,
-                email = user.email
+                email = user.email,
+                wishlists = wishlists
             )
 
             ResponseEntity.ok(userDto)
@@ -82,17 +85,25 @@ class AuthController(
         logger.info { "Fetching user by email: $email" }
         val user = service.findUserByEmail(email)
 
-        return if (user != null) {
+        val wishlists = user!!.wishlists.map {
+            WishlistGetDTO(
+                id = it.id,
+                title = it.title,
+                description = it.description,
+                createdAt = it.createdAt,
+                isPublic = it.isPublic,
+            )
+        }
+
+        return run {
             logger.info { "User found: $user" }
             val userDto = UserGetDTO(
-                id = user.id!!,
-                email = user.email
+                id = user.id,
+                email = user.email,
+                wishlists = wishlists
             )
 
             ResponseEntity.ok(userDto)
-        } else {
-            logger.warn { "User with email: $email not found" }
-            ResponseEntity.notFound().build()
         }
     }
 

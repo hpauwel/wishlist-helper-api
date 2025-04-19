@@ -5,7 +5,7 @@ import be.hpauwel.wishlisthelper.model.dto.wishlist.WishlistGetDTO
 import be.hpauwel.wishlisthelper.repository.WishlistRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 @Service
 class WishlistService(private val repository: WishlistRepository) {
@@ -43,7 +43,7 @@ class WishlistService(private val repository: WishlistRepository) {
                 id = wishlist.id!!,
                 title = wishlist.title,
                 description = wishlist.description,
-                createdAt = wishlist.createdAt.toString(),
+                createdAt = wishlist.createdAt,
                 isPublic = wishlist.isPublic
             )
         }
